@@ -4,7 +4,7 @@
 # Last modified: 10/13/2017
 
 #read in data file
-data<-(read.csv("/Users/dvanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/SERP_Data.csv", header = TRUE))[-1,]
+data<-(read.csv("/Users/dvanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/RTools/MapTools/SERP_Data.csv", header = TRUE))[-1,]
 #select onlyt the ID, Latitude, Longitude
 idlatlong <- subset(data, select=c("ID", "Latitude", "Longitude")) 
 #remove NaN values

@@ -8,21 +8,17 @@ library(maps)
 library(ggplot2)
 library(ggmap)
 
-#read in the file and get column names
-latlongheader<-head(read.csv("/Users/dvanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/SERP_Data.csv", header = FALSE), 1)
-latlong<-read.csv("/Users/dvanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/SERP_Data.csv", skip = 2, header = FALSE)
-#change column names to real headers
-#colnames(latlong) <- as.vector(latlongheader) #not working, not sure why
-
-#keep only ID, latitude, and longitude
-idlatlong <- subset(latlong, select=c("V1", "V12", "V13")) #change to ID, Latitude, Longitude when colnames is working
+#read in data file
+data<-(read.csv("/Users/dvanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/RTools/MapTools/SERP_Data.csv", header = TRUE))[-1,]
+#select onlyt the ID, Latitude, Longitude
+idlatlong <- subset(data, select=c("ID", "Latitude", "Longitude")) 
 
 #clean data, removing lines with NaN values
 #idlatlong<-idlatlong[complete.cases(idlatlong), ]
-#idlatlong <-na.omit(idlatlong)
+idlatlong <-na.omit(idlatlong)
 
-lon <- idlatlong[2:7,]$V13
-lat <- idlatlong[2:7,]$V12
+lon <- idlatlong$Longitude
+lat <- idlatlong$Latitude
 #lon <- idlatlong$V13
 #$lat <- idlatlong$V12
 df <- as.data.frame(cbind(lon,lat))
@@ -31,14 +27,15 @@ df <- as.data.frame(cbind(lon,lat))
 mapzoom <- calc_zoom(lon, lat, df, f = 0.05)
 
 ##create new map
-maplonglat <- get_map(location = c(mean(lon), mean(lat)), zoom = mapzoom - 1, 
+maplonglat <- get_map(location = c(mean(lon), mean(lat)), zoom = 3, 
                       maptype = "satellite", scale = 1)
 
+#first load the map
+ggmap(maplonglat)
 # plot the map with some points on it
 pointsmap <- ggmap(maplonglat) + 
   geom_point(data = df, aes(x = lon, y = lat, fill = "red", alpha = 1), size = 2, shape = 21) + 
   guides(fill=FALSE, alpha=FALSE, size=FALSE)
-
 pointsmap
 
 

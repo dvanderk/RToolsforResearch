@@ -21,28 +21,28 @@ lat <- idlatlong$Latitude
 df <- as.data.frame(cbind(lon,lat))
 
 #create map with lat and long dataframe
-# worldmap = data(worldMapEnv)
-# m <- leaflet(df) %>%
-#   #add default view to see map
-#   addTiles(m) %>%
-#   #create circles objetc
-#   addCircles(m) %>%
-#   #add our longitutde and latitude to the map
-#   addCircles(lng = ~lon, lat = ~lat, radius = 30) #radius in meters, changes as user zooms
-# #display map
-# m 
-
-#create map with lat and long dataframe
 worldmap = data(worldMapEnv)
-m <- leaflet(df)
-#add default view to see map
-m <- addTiles(m)
-#create circles objetc
-m <- addCircles(m) #create circles objetc
-#add our longitutde and latitude to the map
-m <- addCircles(m, lng = ~lon, lat = ~lat, radius = 30) #radius in meters, changes as user zooms
+m <- leaflet(df) %>%
+  #add default view to see map
+  addTiles(m) %>%
+  #create circles objetc
+  addCircles(m) %>%
+  #add our longitutde and latitude to the map
+  addCircles(lng = ~lon, lat = ~lat, radius = 30) #radius in meters, changes as user zooms
 #display map
 m
+
+# #create map with lat and long dataframe
+# worldmap = data(worldMapEnv)
+# m <- leaflet(df)
+# #add default view to see map
+# m <- addTiles(m)
+# #create circles objetc
+# m <- addCircles(m) #create circles objetc
+# #add our longitutde and latitude to the map
+# m <- addCircles(m, lng = ~lon, lat = ~lat, radius = 30) #radius in meters, changes as user zooms
+# #display map
+# m
 
 
 

@@ -1,0 +1,57 @@
+---
+title: "Creating maps using Leaflet for R: Who participates in online experiments?"
+output: html_document
+#rstudio::viewer(qmap)
+---
+
+One of my goals last semester, aside from learning a ton more statistical methods in R in my *Applied Data Analysis and Statistical Inference* class, was to get more hands-on experience creating automated visualization tools. The goal was two-fold: to learn to play around (and fight with) tools in R and Python, as well as to hopefully create web-based data tools that could contribute to the open-science community and make data visualization simpler and instantaneous for anyone with an internet connection. 
+
+One thing I've always loved is maps. As a third-culture kid growing up, I always loved visualizations showing how people all over the world has taken a particular poll, used a particular product, infant birth rates, etc. If my school had offered it I probably would have majored in Demography. My psychology advisor, Professor Jeremy Wilmer, has been working on the TestMyBrain project since his graduate school days at Harvard, and has amassed a spectacular amount of data, including latitude and longitude of participants in many of the tasks on the site. I was curious - what was the distribution of people taking the tasks on the site? Would it be mostly those from "developed" portions of the world" or would the distribution of participants be relatively evenly spread throughout the world? While a visualization doesn't provide a quantitative, definitive answer, I was hoping the distribution would be binary enough (either only in developed countries **or** spanning the whole world) to generally answer my question.
+
+After playing around with various mapping packages in R such as maps and ggmap, I decided to use Leaflet because (a) I could view the whole world in one map, (b) the map was clean, making it easy to see the dots that represented participants, and (c) the dots could be vectorized, allowing users to zoom in and view more precise locations of individuals. 
+
+The first hurdle was deciding how I wanted to use the data I had. The data from TestMyBrain is outputted in csv format (hallelujah). Since I knew I wanted to eventually make whatever I built friendly to the outside world, I was hoping to force them to do as little extra formatting as possible. Thus, my first step was to extract only what I thought would be necessary later on from the csv and create a new data frame.
+
+
+```{r clean data, echo = TRUE}
+library(leaflet)
+library(maps)
+
+#read in data file
+data<-(read.csv("/Users/deevanderknaap/Desktop/Organized/Wellesley 2017-2018/Classes - Fall/PSYC 350/RTools/MapTools/SERP_Data.csv", header = TRUE))[-1,]
+#select onlyt the ID, Latitude, Longitude
+idlatlong <- subset(data, select=c("ID", "Latitude", "Longitude")) 
+#remove NaN values
+idlatlong <-na.omit(idlatlong)
+
+#create vectors of latitutde and longitude for ease of use
+lon <- as.numeric(idlatlong$Longitude)
+lat <- as.numeric(idlatlong$Latitude)
+df <- as.data.frame(cbind(lon,lat))
+```
+
+
+After doing this, building the map with Leaflet was relatively straighforward. Using the documentation, I created a map and simply plotted my latitude and longitude pairs in the dataframe I had made earlier. I wanted to use the default map view since for my purposes I just needed something clean and user friendly. However I found that the default tiles were havign trouble showing up in the browser (see: https://stackoverflow.com/questions/47401718/leaflet-map-not-rendering-in-rmarkdown-r-notebook-when-opened-in-browser) so I decided to use a very similar third-party tile style. 
+
+
+```{r map, echo = TRUE}
+#create map with lat and long dataframe
+worldmap = data(worldMapEnv)
+m <- leaflet(data =df)
+#add tiles to view the map
+m <- addTiles(m, urlTemplate = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png')
+#create circles object
+m <- addCircles(m) #create circles objetc
+#add our longitutde and latitude to the map
+m <- addCircles(m, lng = ~lon, lat = ~lat, radius = 30) #radius in meters, changes as user zooms
+#display map
+m
+```
+
+
+Thus, a map is made containing coordinates of our users!
+
+So what is the map showing us? In general, more people in highly developed countries are using TestMyBrain. However, I don't necessarily think this is due to higher interest. One of the main trends is that countries where English is the national language or English is taught in schools have high participation rates. This explans not only the higher participation rates in the USA, England, and North America, but also the high participation rate in the Indian subcontinent. The reason for this is obvious and points to a key issue: TestMyBrain is available only in English. One way to possibly attract more diverse users would be to offer other language options and hopefully in the future detect the user's location and open the site in that country's language (with an option to switch to English or any other language). This is just one example of an insight that can be generated making just a simple visualization. Though we all get excited about   
+
+
+
